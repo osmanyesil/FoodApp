@@ -7,7 +7,11 @@
 
 import Foundation
 
-class BasketResponse : Codable {
-    var basket:[Basket]?
+struct BasketResponse : Decodable {
+    var basketFoods:[BasketModel]?
     var success:Int?
+    
+    private enum CodingKeys: String, CodingKey {
+        case basketFoods = "sepet_yemekler"
+    }
 }

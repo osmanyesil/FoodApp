@@ -13,13 +13,13 @@ class BasketInteractor : PresenterToInteractorBasketProtocol {
     var basketPresenter: InteractorToPresenterBasketProtocol?
     
     func getFoodBasket(user_name: String) {
-        let params:Parameters = ["kisi_adi":user_name]
+        let params:Parameters = ["kullanici_adi":user_name]
         
-        AF.request("http://kasimadalan.pe.hu/yemekler/sepettekiYemekleriGetir.php",method: .get,parameters:params).response{ response in
+        AF.request("http://kasimadalan.pe.hu/yemekler/sepettekiYemekleriGetir.php",method: .post,parameters:params).response{ response in
             if let data = response.data {
                 do{
                     let response = try JSONDecoder().decode(BasketResponse.self, from: data)
-                    if let responseList = response.basket {
+                    if let responseList = response.basketFoods {
                         self.basketPresenter?.sendDataPresenter(basketList: responseList)
                     }
                 }catch{
@@ -30,7 +30,7 @@ class BasketInteractor : PresenterToInteractorBasketProtocol {
     }
     
     func deleteFoodInBasket(basket_food_id: String, user_name: String) {
-        let params:Parameters = ["sepet_yemek_id":basket_food_id,"kisi_adi":user_name]
+        let params:Parameters = ["sepet_yemek_id":basket_food_id,"kullanici_adi":user_name]
         
         AF.request("http://kasimadalan.pe.hu/yemekler/sepettenYemekSil.php",method: .post,parameters: params).response{ response in
             if let data = response.data {

@@ -21,7 +21,7 @@ class BasketPresenter : ViewToPresenterBasketProtocol {
 }
 
 extension BasketPresenter : InteractorToPresenterBasketProtocol {
-    func sendDataPresenter(basketList: Array<Basket>) {
+    func sendDataPresenter(basketList: Array<BasketModel>) {
         basketView?.sendDataView(basketList: basketList)
     }
 }

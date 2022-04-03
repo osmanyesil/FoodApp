@@ -21,11 +21,11 @@ protocol PresenterToInteractorHomeProtocol{
 }
 
 protocol InteractorToPresenterHomeProtocol{
-    func sendDataPresenter(foodList:Array<Foods>)
+    func sendDataPresenter(foodList:Array<FoodModel>)
 }
 
 protocol PresenterToViewHomeProtocol {
-    func sendDataView(foodList:Array<Foods>)
+    func sendDataView(foodList:Array<FoodModel>)
 }
 
 protocol PresenterToRouterHomeProtocol {

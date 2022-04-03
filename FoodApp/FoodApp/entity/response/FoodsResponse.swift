@@ -7,7 +7,12 @@
 
 import Foundation
 
-class FoodsResponse : Codable {
-    var foods:[Foods]?
-    var success:Int?
+struct FoodsResponse : Decodable {
+    var foods:[FoodModel]?
+    var success:Bool?
+    
+    private enum CodingKeys: String, CodingKey {
+        case foods = "yemekler"
+    }
 }
+

@@ -12,7 +12,7 @@ protocol ViewToPresenterBasketProtocol {
     var basketView:PresenterToViewBasketProtocol? {get set}
     
     func foodBasket(user_name:String)
-    func delFoodInBasket(basket_food_id:String,user_name:String)
+    func delFoodInBasket(basket_food_id:String,user_name:String) 
 }
 
 protocol PresenterToInteractorBasketProtocol {
@@ -23,11 +23,11 @@ protocol PresenterToInteractorBasketProtocol {
 }
 
 protocol InteractorToPresenterBasketProtocol {
-    func sendDataPresenter(basketList:Array<Basket>)
+    func sendDataPresenter(basketList:Array<BasketModel>)
 }
 
 protocol PresenterToViewBasketProtocol{
-    func sendDataView(basketList:Array<Basket>)
+    func sendDataView(basketList:Array<BasketModel>)
 }
 
 

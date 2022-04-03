@@ -9,16 +9,13 @@ import Foundation
 import Alamofire
 
 class DetailInteractor : PresenterToInteractorDetailProtocol {
-    func getFoodImage(name: String) {
-        //TODO: Kingfisher ile resim çekilecek.
-        
-        if let url = URL(string: "http://kasimadalan.pe.hu/yemekler/resimler/\(name)"){
-            //imageView.kf.SetImage(with:url) //kf dediğimizde KingFisher cache e atıyoruz
-        }
-    }
-    
-    func addFoodBasket(food_name: String, food_imageName: String, food_price: String, food_order_count: String, user_name: String) {
-        let params:Parameters = ["yemek_adi":food_name,"yemek_resim_adi":food_imageName,"yemek_fiyat":food_price,"yemek_siparis_adet":food_order_count,"kullanici_adi":user_name]
+
+    func addFoodBasket(model:BasketModel) {
+        let params:Parameters = ["yemek_adi":model.name ?? "",
+                                 "yemek_resim_adi":model.imageName ?? "",
+                                 "yemek_fiyat":Int(model.price ?? "0") ?? 0,
+                                 "yemek_siparis_adet":Int(model.foodOrderCount ?? "0"),
+                                 "kullanici_adi":model.userName ?? ""]
         
         AF.request("http://kasimadalan.pe.hu/yemekler/sepeteYemekEkle.php",method: .post,parameters: params).response{ response in
             if let data = response.data {
