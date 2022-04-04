@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BasketVC: UIViewController {
+class BasketVC: BaseViewController {
 
     var basketList = [BasketModel]()
     var basketPresenterObject:ViewToPresenterBasketProtocol?
@@ -18,8 +18,11 @@ class BasketVC: UIViewController {
         super.viewDidLoad()
         registerCells()
         BasketRouter.createModule(ref: self)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         basketPresenterObject?.basketInteractor?.getFoodBasket(user_name: username)
-        
     }
     
     private func registerCells(){
@@ -40,6 +43,18 @@ extension BasketVC : PresenterToViewBasketProtocol {
 
 extension BasketVC : UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if basketList.isEmpty && tableView.backgroundView == nil {
+            let noItemLabel = UILabel() //no need to set frame.
+            noItemLabel.textAlignment = .center
+            noItemLabel.textColor = .lightGray
+            noItemLabel.text = "Sepetinizde ürün bulunmamaktadır."
+            noItemLabel.numberOfLines = 0
+            noItemLabel.font = UIFont(name: "Avenir-Medium", size: 18)
+            tableView.backgroundView = noItemLabel
+        }
+        
+        tableView.backgroundView?.isHidden = !basketList.isEmpty
+        
         return basketList.count
     }
     
@@ -50,7 +65,7 @@ extension BasketVC : UITableViewDelegate,UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return FoodItemTableViewCell.rowHeight
+        return 100
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

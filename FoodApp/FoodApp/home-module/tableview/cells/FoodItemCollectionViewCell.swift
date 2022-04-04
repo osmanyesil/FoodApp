@@ -1,29 +1,24 @@
 //
-//  FoodItemTableViewCell.swift
+//  FoodItemCollectionViewCell.swift
 //  FoodApp
 //
-//  Created by osmanyesil on 4/2/22.
+//  Created by osmanyesil on 4/3/22.
 //
 
 import UIKit
 import Kingfisher
 
-class FoodItemTableViewCell: UITableViewCell {
+class FoodItemCollectionViewCell: UICollectionViewCell {
 
+    
     @IBOutlet private weak var nameLabel: UILabel!
     @IBOutlet private weak var priceLabel: UILabel!
     @IBOutlet private weak var previewImageView: UIImageView!
-    static let rowHeight:CGFloat = 120
-    
-
     override func awakeFromNib() {
         super.awakeFromNib()
+        
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-    
     func setupUI(model: FoodModel){
         nameLabel.text = model.name
         priceLabel.text = "₺\(model.price ?? "0")"
@@ -34,5 +29,3 @@ class FoodItemTableViewCell: UITableViewCell {
         }
     }
 }
-
-

@@ -23,6 +23,7 @@ class BasketInteractor : PresenterToInteractorBasketProtocol {
                         self.basketPresenter?.sendDataPresenter(basketList: responseList)
                     }
                 }catch{
+                    self.basketPresenter?.sendDataPresenter(basketList: [])
                     print(error.localizedDescription)
                 }
             }

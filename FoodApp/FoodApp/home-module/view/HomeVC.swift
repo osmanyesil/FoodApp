@@ -7,14 +7,14 @@
 
 import UIKit
 
-class HomeVC: UIViewController {
+class HomeVC: BaseViewController {
 
     var foodList = [FoodModel]()
     var filteredData = [FoodModel]()
     var isSearching:Bool = false
     var homePresenterObject:ViewToPresenterHomeProtocol?
     @IBOutlet private weak var searchBar: UISearchBar!
-    @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var collectionView: UICollectionView!
     
     
     override func viewDidLoad() {
@@ -26,26 +26,20 @@ class HomeVC: UIViewController {
     }
     
     func setupUI(){
-        let appearance = UINavigationBarAppearance()
-        self.navigationController?.navigationBar.isTranslucent = true
-        
-        appearance.backgroundColor = UIColor(red: 112/255, green: 13/255, blue: 193/255, alpha: 1)
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.compactAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        //layout.itemSize = CGSizeMake(50, 50)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        collectionView?.setCollectionViewLayout(layout, animated: false)
         
     }
     
     private func registerCells(){
-        tableView.register(UINib(nibName: "FoodItemTableViewCell", bundle: nil), forCellReuseIdentifier: "FoodItemTableViewCell")
+        collectionView.register(UINib(nibName: "FoodItemCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "FoodItemCollectionViewCell")
     }
     
     @IBAction func toBasket(_ sender: Any) {
-        let storyBoard = UIStoryboard(name: "Main", bundle:nil)
-        let basketVC = storyBoard.instantiateViewController(withIdentifier: "BasketVC") as! BasketVC
-        self.navigationController?.pushViewController(basketVC, animated: true)
+        self.tabBarController?.selectedIndex = 1
     }
     
     func getCurrentData() -> [FoodModel]{
@@ -58,7 +52,7 @@ extension HomeVC : PresenterToViewHomeProtocol {
     func sendDataView(foodList: Array<FoodModel>) {
         self.foodList = foodList
         DispatchQueue.main.async {
-            self.tableView.reloadData()
+            self.collectionView.reloadData()
         }
     }
 }
@@ -75,31 +69,43 @@ extension HomeVC : UISearchBarDelegate {
                 $0.name!.lowercased().contains(searchText.lowercased())
             }
         }
-        self.tableView.reloadData()
+        self.collectionView.reloadData()
     }
 }
 
-extension HomeVC : UITableViewDelegate,UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension HomeVC : UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if getCurrentData().isEmpty && collectionView.backgroundView == nil {
+            let noItemLabel = UILabel() //no need to set frame.
+            noItemLabel.textAlignment = .center
+            noItemLabel.textColor = .lightGray
+            noItemLabel.text = "Aranılan yemek bulunamadı.\n Lütfen farklı bir arama yapınız."
+            noItemLabel.numberOfLines = 0
+            noItemLabel.font = UIFont(name: "Avenir-Medium", size: 18)
+            collectionView.backgroundView = noItemLabel
+        }
+        
+        collectionView.backgroundView?.isHidden = !getCurrentData().isEmpty
         return getCurrentData().count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "FoodItemTableViewCell", for: indexPath) as! FoodItemTableViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FoodItemCollectionViewCell", for: indexPath) as! FoodItemCollectionViewCell
         cell.setupUI(model: getCurrentData()[indexPath.row])
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return FoodItemTableViewCell.rowHeight
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let storyBoard = UIStoryboard(name: "Main", bundle:nil)
         let detailVC = storyBoard.instantiateViewController(withIdentifier: "DetailVC") as! DetailVC
         detailVC.selectedFood = getCurrentData()[indexPath.row]
         self.navigationController?.pushViewController(detailVC, animated: true)
-        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = (UIScreen.main.bounds.size.width / 2) - 40
+        let height = UIScreen.main.bounds.size.height / 4
+        return CGSize(width: width, height: height)
     }
 }
 

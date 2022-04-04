@@ -28,12 +28,6 @@ class DetailVC: UIViewController {
 
         setupUI()
         DetailRouter.createModule(ref: self)
-        
-        //Sepete ekleme
-        //detailPresenterObject?.foodBasket(food_name: "", food_imageName: "", food_price: "", food_order_count: "", user_name: "")
-
-    
-        
     }
     
     func setupUI(){
@@ -47,7 +41,7 @@ class DetailVC: UIViewController {
     }
     
     @IBAction func addBasketAction(_ sender: Any) {
-        if let count = Int(countLabel.text!){
+        if let count = Int(countLabel.text ?? "0"){
             if (count <= 0)   {
                 let alert = UIAlertController(title: "Hata", message: "Sepete eklenecek Ürün Adedini\n lütfen kontrol ediniz!", preferredStyle: UIAlertController.Style.alert)
                 let okButton = UIAlertAction(title: "Tamam", style: UIAlertAction.Style.default) { (UIAlertAction) in
@@ -62,8 +56,8 @@ class DetailVC: UIViewController {
                                               price: selectedFood.price,
                                               foodOrderCount: countLabel.text ?? "",
                                               userName: username)
+                
                 detailPresenterObject?.foodBasket(model:basketModel)
-                toBasket(self)
             }
         }
     }
@@ -81,10 +75,16 @@ class DetailVC: UIViewController {
             }
         }
     }
-    
-    @IBAction func toBasket(_ sender: Any) {
-        let storyBoard = UIStoryboard(name: "Main", bundle:nil)
-        let basketVC = storyBoard.instantiateViewController(withIdentifier: "BasketVC") as! BasketVC
-        self.navigationController?.pushViewController(basketVC, animated: true)
+
+    func openBasketTab(){
+        self.tabBarController?.selectedIndex = 1
+    }
+}
+
+extension DetailVC : PresenterToViewDetailProtocol {
+    func sendDataView(_ succcess:Bool) {
+        if succcess {
+            openBasketTab()
+        }
     }
 }
